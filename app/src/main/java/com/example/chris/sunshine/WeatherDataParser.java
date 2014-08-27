@@ -22,13 +22,20 @@ class WeatherDataParser {
     /**
      * Prepare the weather high/lows for presentation.
      */
-    private static String formatHighLows(double high, double low) {
-        // For presentation, assume the user doesn't care about tenths of a degree.
+    private static String formatHighLows(double high, double low, boolean metric) {
+
+        //convert to Farenheit if not metric
+        if (!metric) {
+            high = (high * 1.8)+32;
+            low = (low * 1.8)+32;
+        }
+
+        //round to whole numbers
         long roundedHigh = Math.round(high);
         long roundedLow = Math.round(low);
 
+        //return formatted display string
         return roundedHigh + "/" + roundedLow;
-
     }
 
     /**
@@ -38,7 +45,7 @@ class WeatherDataParser {
      * Fortunately parsing is easy:  constructor takes the JSON string and converts it
      * into an Object hierarchy for us.
      */
-    public static String[] getWeatherDataFromJson(String forecastJsonStr)
+    public static String[] getWeatherDataFromJson(String forecastJsonStr, boolean metric)
             throws JSONException {
 
         // These are the names of the JSON objects that need to be extracted.
@@ -65,7 +72,7 @@ class WeatherDataParser {
             JSONObject tempJson = weatherArray.getJSONObject(i)
                     .getJSONObject(OWM_TEMPERATURE);
             String highLow = formatHighLows((tempJson.getDouble(OWM_MAX)),
-                    (tempJson.getDouble(OWM_MIN)));
+                    (tempJson.getDouble(OWM_MIN)),metric);
             formattedArray[i] = String.format("%s - %s - %s",date,description,highLow);
         }
         return formattedArray;

@@ -8,9 +8,14 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.example.chris.sunshine.DetailActivity$PlaceholderFragment">
 
+
+
     <TextView
-        android:text="@string/hello_world"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:id="@+id/forecast_textview"
+        android:gravity="center_vertical"
+        xmlns:android="http://schemas.android.com/apk/res/android" />
 
 </RelativeLayout>

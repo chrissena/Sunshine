@@ -1,5 +1,6 @@
 package com.example.chris.sunshine;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -8,7 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.TextView;
 
 
 public class DetailActivity extends ActionBarActivity {
@@ -39,9 +40,11 @@ public class DetailActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            Intent settingsIntent = new Intent(this,SettingsActivity.class);
+            startActivity(settingsIntent);
             return true;
         }
-        return super.onOptionsItemSelected(item);
+        else return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -56,6 +59,8 @@ public class DetailActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+            String forecast = getActivity().getIntent().getExtras().getString(Intent.EXTRA_TEXT);
+            ((TextView) rootView.findViewById(R.id.forecast_textview)).setText(forecast);
             return rootView;
         }
     }
