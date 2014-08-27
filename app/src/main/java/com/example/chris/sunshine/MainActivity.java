@@ -1,10 +1,13 @@
 package com.example.chris.sunshine;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 
 @SuppressWarnings("WeakerAccess")
@@ -38,8 +41,29 @@ public class MainActivity extends ActionBarActivity {
             Intent settingsIntent = new Intent(this,SettingsActivity.class);
             startActivity(settingsIntent);
             return true;
+        }else if(id == R.id.view_location){
+            if (openPreferedLocationInMap()) return true;
         }
-        else return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item);
+    }
+
+    private boolean openPreferedLocationInMap() {
+        String location =  PreferenceManager.getDefaultSharedPreferences(this).getString(
+                getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default));
+
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("geo")
+                .appendPath("0,0")
+                .appendQueryParameter("q",location);
+
+        Intent locationIntent = new Intent(Intent.ACTION_VIEW,builder.build());
+        if (locationIntent.resolveActivity(getPackageManager())!= null){
+            startActivity(locationIntent);
+            return true;
+        }
+        Toast.makeText(this, "Please install a maps app.", Toast.LENGTH_SHORT).show();
+        return false;
     }
 
 

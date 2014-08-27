@@ -12,5 +12,8 @@
     <string name="pref_units_label">Temperature Units</string>
     <string name="pref_units_key">units</string>
     <string name="pref_units_metric">Metric</string>
+    <string name="settings_activity_name">Settings</string>
+    <string name="view_location">View Location</string>
+    <string name="action_share">Share</string>
 
 </resources>
