@@ -6,9 +6,9 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class WeatherDataParser {
+class WeatherDataParser {
 
-    /* The date/time conversion code is going to be moved outside the asynctask later,
+    /* The date/time conversion code is going to be moved outside the AsyncTask later,
      * so for convenience we're breaking it out into its own method now.
      */
     private static String getReadableDateString(long time){
@@ -33,7 +33,7 @@ public class WeatherDataParser {
 
     /**
      * Take the String representing the complete forecast in JSON Format and
-     * pull out the data we need to construct the Strings needed for the wireframes.
+     * pull out the data we need to construct the Strings needed for the wire frames.
      *
      * Fortunately parsing is easy:  constructor takes the JSON string and converts it
      * into an Object hierarchy for us.

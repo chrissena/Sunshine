@@ -31,9 +31,10 @@ import java.util.List;
  * Fragment displaying main weather forecast
  * Created by Chris on 26/08/2014.
  */
+@SuppressWarnings("WeakerAccess")
 public class ForecastFragment extends Fragment {
-    ArrayAdapter<String> mForecastAdapter;
-    ListView mForecastListView;
+    private ArrayAdapter<String> mForecastAdapter;
+
     public ForecastFragment() {
     }
 
@@ -74,7 +75,7 @@ public class ForecastFragment extends Fragment {
                 "Weds - Cloudy - 72,63",
                 "Thurs - Asteroids - 75/65",
                 "Fri - Heavy Rain - 65/56",
-                "Sat - HELP TRAPPED IN WEATHERSTATION - 60/51",
+                "Sat - HELP TRAPPED IN WEATHER STATION - 60/51",
                 "Sun - Sunny - 80/68"
         };
 
@@ -84,7 +85,7 @@ public class ForecastFragment extends Fragment {
                 R.layout.list_item_forecast,
                 R.id.list_item_forecast_textview,
                 weekForecast);
-        mForecastListView = (ListView) rootView.findViewById(R.id.listview_forecast);
+        ListView mForecastListView = (ListView) rootView.findViewById(R.id.listview_forecast);
         mForecastListView.setAdapter(mForecastAdapter);
 
         return rootView;
