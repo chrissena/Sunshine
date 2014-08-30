@@ -10,6 +10,9 @@ import com.example.chris.sunshine.data.WeatherContract.LocationEntry;
 import com.example.chris.sunshine.data.WeatherContract.WeatherEntry;
 import com.example.chris.sunshine.data.WeatherDbHelper;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
@@ -18,19 +21,12 @@ public class TestDb extends AndroidTestCase {
 
     public static final String LOG_TAG = TestDb.class.getSimpleName();
     long locationRowId;
+    public String testName = "North Pole";
 
-    public void testCreateDb() throws Throwable{
 
-        mContext.deleteDatabase(WeatherDbHelper.DATABASE_NAME);
-        SQLiteDatabase db = new WeatherDbHelper(
-                this.mContext).getWritableDatabase();
-        assertEquals(true,db.isOpen());
-        db.close();
-    }
-
-    public void testInsertReadLocationDb(){
+    ContentValues getLocationContentValues(){
         //Test data we're going to insert into the DB to see
-        String testName = "North Pole";
+
         String testLocationSetting = "99705";
         double testLatitude = 64.772;
         double testLongitude = -147.355;
@@ -42,71 +38,9 @@ public class TestDb extends AndroidTestCase {
         values.put(LocationEntry.COLUMN_COORD_LAT,testLatitude);
         values.put(LocationEntry.COLUMN_COORD_LONG,testLongitude);
 
-        //If there's an error in those massive SQL table creation Strings,
-        //errors will be thrown here when you try to get a writable databaase.
-        WeatherDbHelper dbHelper = new WeatherDbHelper(mContext);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        locationRowId = db.insert(LocationEntry.TABLE_NAME,null, values);
-
-        //Verify we got a row back.
-        assertTrue(locationRowId != -1);
-        Log.d(LOG_TAG,"New row id: " + locationRowId);
-
-        // Specify which columns you want.
-        String[] columns = {
-                LocationEntry._ID,
-                LocationEntry.COLUMN_CITY_NAME,
-                LocationEntry.COLUMN_LOCATION_SETTING,
-                LocationEntry.COLUMN_COORD_LAT,
-                LocationEntry.COLUMN_COORD_LONG
-        };
-
-        // A cursor is your primary interface to the query results.
-        Cursor cursor = db.query(
-                LocationEntry.TABLE_NAME,  //Table to Query
-                columns,
-                null, //Columns for the "where" clause
-                null, //Values for the "where" clause
-                null, //columns to group by
-                null, //columns to filter by row groups
-                null  //sort order
-        );
-        if(cursor.moveToFirst()) {
-            //Get the value in each column by finding the appropriate column index.
-
-            int nameIndex = cursor.getColumnIndex(LocationEntry.COLUMN_CITY_NAME);
-            String name = cursor.getString(nameIndex);
-
-            int locationIndex = cursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_SETTING);
-            String location = cursor.getString(locationIndex);
-
-
-            int latIndex = cursor.getColumnIndex(LocationEntry.COLUMN_COORD_LAT);
-            double latitude = cursor.getDouble(latIndex);
-
-            int longIndex = cursor.getColumnIndex(LocationEntry.COLUMN_COORD_LONG);
-            double longitude = cursor.getDouble(longIndex);
-
-            //Hurray, data was returned! Assert that it's the right data, and that the database
-            //creation code is working as intended.
-            //Then take a break. We both know that wasn't easy
-
-            assertEquals(testLocationSetting, location);
-            assertEquals(testLatitude, latitude);
-            assertEquals(testLongitude, longitude);
-            assertEquals(testName, name);
-
-            dbHelper.close();
-        } else {
-            //That's weird, it works on MY machine...
-            fail("No values returned :(");
-
-        }
-
+        return values;
     }
-    public void testInsertReadWeatherDb() {
-        // Fantastic.  Now that we have a location, add some weather!
+    ContentValues getWeatherContentValues(long locationRowId){
         String testDate, testDescription;
         Double testDegrees, testWind, testHumidity, testPressure;
         int testMin, testMax, testId;
@@ -123,85 +57,70 @@ public class TestDb extends AndroidTestCase {
         weatherValues.put(WeatherEntry.COLUMN_SHORT_DESC, testDescription = "Asteroids");
         weatherValues.put(WeatherEntry.COLUMN_WIND_SPEED, testWind = 5.5);
         weatherValues.put(WeatherEntry.COLUMN_WEATHER_ID, testId = 321);
+        return weatherValues;
+    }
+    public void testCreateDb() throws Throwable{
 
+        mContext.deleteDatabase(WeatherDbHelper.DATABASE_NAME);
+        SQLiteDatabase db = new WeatherDbHelper(
+                this.mContext).getWritableDatabase();
+        assertEquals(true,db.isOpen());
+        db.close();
+    }
 
-        //errors will be thrown here when you try to get a writable databaase.
+    public void testInsertReadLocationDb(){
+
         WeatherDbHelper dbHelper = new WeatherDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        db.insert(WeatherEntry.TABLE_NAME,null, weatherValues);
-        // Specify which columns you want.
-        String[] columns = {
-                WeatherEntry.COLUMN_LOC_KEY,
-                WeatherEntry.COLUMN_DATETEXT,
-                WeatherEntry.COLUMN_DEGREES,
-                WeatherEntry.COLUMN_HUMIDITY,
-                WeatherEntry.COLUMN_PRESSURE,
-                WeatherEntry.COLUMN_MAX_TEMP,
-                WeatherEntry.COLUMN_MIN_TEMP,
-                WeatherEntry.COLUMN_SHORT_DESC,
-                WeatherEntry.COLUMN_WIND_SPEED,
-                WeatherEntry.COLUMN_WEATHER_ID
-        };
+        ContentValues values = getLocationContentValues();
+        locationRowId = db.insert(LocationEntry.TABLE_NAME,null, values);
+
+        //Verify we got a row back.
+        assertTrue(locationRowId != -1);
+        Log.d(LOG_TAG,"New row id: " + locationRowId);
 
 
         // A cursor is your primary interface to the query results.
         Cursor cursor = db.query(
-                WeatherEntry.TABLE_NAME,  //Table to Query
-                columns,
+                LocationEntry.TABLE_NAME,  //Table to Query
+                null,
                 null, //Columns for the "where" clause
                 null, //Values for the "where" clause
                 null, //columns to group by
                 null, //columns to filter by row groups
                 null  //sort order
         );
-        if (cursor.moveToFirst()) {
-            //Get the value in each column by finding the appropriate column index.
-            int locIndex = cursor.getColumnIndex(WeatherEntry.COLUMN_LOC_KEY);
-            int key = cursor.getInt(locIndex);
+        if(cursor.moveToFirst()){
+            validateCursor(values,cursor);
 
-            int dateIndex = cursor.getColumnIndex(WeatherEntry.COLUMN_DATETEXT);
-            String date = cursor.getString(dateIndex);
+            dbHelper.close();
+        } else {
+            fail("No values returned :(");
+        }
 
-            int degIndex = cursor.getColumnIndex(WeatherEntry.COLUMN_DEGREES);
-            double degrees = cursor.getDouble(degIndex);
+    }
+    public void testInsertReadWeatherDb() {
 
-            int humIndex = cursor.getColumnIndex(WeatherEntry.COLUMN_HUMIDITY);
-            double humidity = cursor.getDouble(humIndex);
+        ContentValues weatherValues = getWeatherContentValues(locationRowId);
+        //errors will be thrown here when you try to get a writable databaase.
+        WeatherDbHelper dbHelper = new WeatherDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-            int presIndex = cursor.getColumnIndex(WeatherEntry.COLUMN_PRESSURE);
-            double pressure = cursor.getDouble(presIndex);
+        db.insert(WeatherEntry.TABLE_NAME,null, weatherValues);
 
-            int maxIndex = cursor.getColumnIndex(WeatherEntry.COLUMN_MAX_TEMP);
-            int max = cursor.getInt(maxIndex);
-
-            int minIndex = cursor.getColumnIndex(WeatherEntry.COLUMN_MIN_TEMP);
-            int min = cursor.getInt(minIndex);
-
-            int descIndex = cursor.getColumnIndex(WeatherEntry.COLUMN_SHORT_DESC);
-            String description = cursor.getString(descIndex);
-
-            int windIndex = cursor.getColumnIndex(WeatherEntry.COLUMN_WIND_SPEED);
-            double wind = cursor.getDouble(windIndex);
-
-            int idIndex = cursor.getColumnIndex(WeatherEntry.COLUMN_WEATHER_ID);
-            long id = cursor.getLong(idIndex);
-
-
-            //Hurray, data was returned! Assert that it's the right data, and that the database
-            //creation code is working as intended.
-            //Then take a break. We both know that wasn't easy
-
-            assertEquals(testKey, key);
-            assertEquals(testDate, date);
-            assertEquals(testDegrees, degrees);
-            assertEquals(testHumidity, humidity);
-            assertEquals(testPressure, pressure);
-            assertEquals(testMax, max);
-            assertEquals(testMin, min);
-            assertEquals(testDescription, description);
-            assertEquals(testWind, wind);
-            assertEquals(testId, id);
+        // A cursor is your primary interface to the query results.
+        Cursor cursor = db.query(
+                WeatherEntry.TABLE_NAME,  //Table to Query
+                null,
+                null, //Columns for the "where" clause
+                null, //Values for the "where" clause
+                null, //columns to group by
+                null, //columns to filter by row groups
+                null  //sort order
+        );
+        if(cursor.moveToFirst()){
+            validateCursor(weatherValues,cursor);
 
             dbHelper.close();
         } else {
@@ -210,4 +129,19 @@ public class TestDb extends AndroidTestCase {
 
         }
     }
+
+    static public void validateCursor(ContentValues expectedValues, Cursor valueCursor){
+        Set<Map.Entry<String,Object>> valueSet = expectedValues.valueSet();
+
+        for (Map.Entry<String,Object> entry : valueSet){
+            String columnName = entry.getKey();
+            int idx = valueCursor.getColumnIndex(columnName);
+            assertFalse(-1 == idx);
+            String expectedValue = entry.getValue().toString();
+
+            assertEquals(expectedValue, valueCursor.getString(idx));
+        }
+    }
+
+
 }
