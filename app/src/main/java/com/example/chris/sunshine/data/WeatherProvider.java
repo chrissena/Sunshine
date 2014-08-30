@@ -18,6 +18,7 @@ import com.example.chris.sunshine.data.WeatherContract.WeatherEntry;
  * Content provider for weather & location data
  * Created by Chris on 29/08/2014.
  */
+@SuppressWarnings("WeakerAccess")
 public class WeatherProvider extends ContentProvider {
 
     private static final int WEATHER = 100;
@@ -26,7 +27,7 @@ public class WeatherProvider extends ContentProvider {
     private static final int LOCATION = 300;
     private static final int LOCATION_ID = 301;
     private WeatherDbHelper mOpenHelper;
-    private static UriMatcher sUriMatcher = buildUriMatcher();
+    private static final UriMatcher sUriMatcher = buildUriMatcher();
     private static final SQLiteQueryBuilder sWeatherByLocationSettingQueryBuilder;
     static {
         sWeatherByLocationSettingQueryBuilder = new SQLiteQueryBuilder();

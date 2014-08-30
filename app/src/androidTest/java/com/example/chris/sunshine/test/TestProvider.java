@@ -19,13 +19,11 @@ import java.util.Set;
 
 public class TestProvider extends AndroidTestCase {
 
-    public static final String LOG_TAG = TestProvider.class.getSimpleName();
-    static long locationRowId;
-    static long weatherRowId;
-    static public String TEST_CITY_NAME = "North Pole";
-    static public String TEST_LOCATION = "99705";
-    static public String TEST_DATE = "20141205";
-    static public ContentValues weatherContentValues;
+    private static final String LOG_TAG = TestProvider.class.getSimpleName();
+    private static long locationRowId;
+    private static final String TEST_CITY_NAME = "North Pole";
+    private static final String TEST_LOCATION = "99705";
+    private static final String TEST_DATE = "20141205";
 
     // The target api annotation is needed for the call to keySet -- we wouldn't want
     // to use this in our app, but in a test it's fine to assume a higher target.
@@ -113,11 +111,11 @@ public class TestProvider extends AndroidTestCase {
         testInsertReadProviderLocation();
 
         //now enter correspoonding weather data
-        weatherContentValues = getWeatherContentValues(locationRowId);
+        ContentValues weatherContentValues = getWeatherContentValues(locationRowId);
 
         Uri addedContentUri = mContext.getContentResolver()
                 .insert(WeatherEntry.CONTENT_URI, weatherContentValues);
-        weatherRowId = ContentUris.parseId(addedContentUri);
+        ContentUris.parseId(addedContentUri);
         Cursor weatherCursor  = null;
 
         try {
@@ -247,7 +245,7 @@ public class TestProvider extends AndroidTestCase {
     }
 
     // brings our database to an empty state
-    public void deleteAllRecords() {
+    void deleteAllRecords() {
         mContext.getContentResolver().delete(
                 WeatherEntry.CONTENT_URI,
                 null,
@@ -282,7 +280,7 @@ public class TestProvider extends AndroidTestCase {
 
     // Since we want each test to start with a clean slate, run deleteAllRecords
     // in setUp (called by the test runner before each test).
-    static public void validateCursor(ContentValues expectedValues, Cursor valueCursor){
+    private static void validateCursor(ContentValues expectedValues, Cursor valueCursor){
         Set<Map.Entry<String,Object>> valueSet = expectedValues.valueSet();
 
         for (Map.Entry<String,Object> entry : valueSet){

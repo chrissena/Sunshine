@@ -33,7 +33,7 @@ public class WeatherContract {
 
     //Use CONTENT_AUTHORITY to create the base of all URI's which apps use to contact
     //the content provider.
-    public static final Uri BASE_CONTENT_URI = Uri.parse("content://"+CONTENT_AUTHORITY);
+    private static final Uri BASE_CONTENT_URI = Uri.parse("content://"+CONTENT_AUTHORITY);
 
     //Possible paths (appended to base content URI for possible URI's)
     public static final String PATH_WEATHER = "weather";
@@ -118,8 +118,9 @@ public class WeatherContract {
         public static Uri buildWeatherLocation(String locationSetting) {
             return CONTENT_URI.buildUpon().appendPath(locationSetting).build();
         }
+        @SuppressWarnings("SameParameterValue")
         public static Uri buildWeatherLocationWithStartDate(
-                String locationSetting, String startDate) {
+                @SuppressWarnings("SameParameterValue") String locationSetting, String startDate) {
             return CONTENT_URI.buildUpon().appendPath(locationSetting)
                     .appendQueryParameter(COLUMN_DATETEXT, startDate).build();
         }

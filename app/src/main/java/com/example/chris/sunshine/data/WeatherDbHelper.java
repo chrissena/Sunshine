@@ -8,6 +8,7 @@ import com.example.chris.sunshine.data.WeatherContract.LocationEntry;
 import com.example.chris.sunshine.data.WeatherContract.WeatherEntry;
 
 /**
+ *  Db Helper
  * Created by Chris on 27/08/2014.
  */
 public class WeatherDbHelper extends SQLiteOpenHelper {
@@ -18,10 +19,6 @@ public class WeatherDbHelper extends SQLiteOpenHelper {
     public WeatherDbHelper(Context context){
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
 }
-    public WeatherDbHelper(Context context, String name,
-                           SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-    }
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {

@@ -39,7 +39,8 @@
         </activity>
         <provider
             android:authorities="com.example.chris.sunshine.data"
-            android:name=".data.WeatherProvider"/>
+            android:name=".data.WeatherProvider"
+            tools:ignore="ExportedContentProvider" />
     </application>
 
 </manifest>

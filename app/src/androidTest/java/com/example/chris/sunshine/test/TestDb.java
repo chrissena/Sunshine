@@ -19,9 +19,8 @@ import java.util.Set;
 
 public class TestDb extends AndroidTestCase {
 
-    public static final String LOG_TAG = TestDb.class.getSimpleName();
-    long locationRowId;
-    public String testName = "North Pole";
+    private static final String LOG_TAG = TestDb.class.getSimpleName();
+    private long locationRowId;
 
 
     ContentValues getLocationContentValues(){
@@ -33,6 +32,7 @@ public class TestDb extends AndroidTestCase {
 
         //Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
+        String testName = "North Pole";
         values.put(LocationEntry.COLUMN_CITY_NAME, testName);
         values.put(LocationEntry.COLUMN_LOCATION_SETTING,testLocationSetting);
         values.put(LocationEntry.COLUMN_COORD_LAT,testLatitude);
@@ -41,22 +41,19 @@ public class TestDb extends AndroidTestCase {
         return values;
     }
     ContentValues getWeatherContentValues(long locationRowId){
-        String testDate, testDescription;
-        Double testDegrees, testWind, testHumidity, testPressure;
-        int testMin, testMax, testId;
-        long testKey;
+
 
         ContentValues weatherValues = new ContentValues();
-        weatherValues.put(WeatherEntry.COLUMN_LOC_KEY, testKey = locationRowId);
-        weatherValues.put(WeatherEntry.COLUMN_DATETEXT, testDate = "20141205");
-        weatherValues.put(WeatherEntry.COLUMN_DEGREES, testDegrees = 1.1);
-        weatherValues.put(WeatherEntry.COLUMN_HUMIDITY, testHumidity = 1.2);
-        weatherValues.put(WeatherEntry.COLUMN_PRESSURE, testPressure = 1.3);
-        weatherValues.put(WeatherEntry.COLUMN_MAX_TEMP, testMax = 75);
-        weatherValues.put(WeatherEntry.COLUMN_MIN_TEMP, testMin = 65);
-        weatherValues.put(WeatherEntry.COLUMN_SHORT_DESC, testDescription = "Asteroids");
-        weatherValues.put(WeatherEntry.COLUMN_WIND_SPEED, testWind = 5.5);
-        weatherValues.put(WeatherEntry.COLUMN_WEATHER_ID, testId = 321);
+        weatherValues.put(WeatherEntry.COLUMN_LOC_KEY, locationRowId);
+        weatherValues.put(WeatherEntry.COLUMN_DATETEXT,"20141205");
+        weatherValues.put(WeatherEntry.COLUMN_DEGREES, 1.1);
+        weatherValues.put(WeatherEntry.COLUMN_HUMIDITY, 1.2);
+        weatherValues.put(WeatherEntry.COLUMN_PRESSURE, 1.3);
+        weatherValues.put(WeatherEntry.COLUMN_MAX_TEMP, 75);
+        weatherValues.put(WeatherEntry.COLUMN_MIN_TEMP, 65);
+        weatherValues.put(WeatherEntry.COLUMN_SHORT_DESC, "Asteroids");
+        weatherValues.put(WeatherEntry.COLUMN_WIND_SPEED, 5.5);
+        weatherValues.put(WeatherEntry.COLUMN_WEATHER_ID, 321);
         return weatherValues;
     }
     public void testCreateDb() throws Throwable{
@@ -130,7 +127,7 @@ public class TestDb extends AndroidTestCase {
         }
     }
 
-    static public void validateCursor(ContentValues expectedValues, Cursor valueCursor){
+    private static void validateCursor(ContentValues expectedValues, Cursor valueCursor){
         Set<Map.Entry<String,Object>> valueSet = expectedValues.valueSet();
 
         for (Map.Entry<String,Object> entry : valueSet){
