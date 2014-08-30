@@ -1,11 +1,9 @@
 package com.example.chris.sunshine.test;
 
-import android.annotation.TargetApi;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
@@ -31,12 +29,12 @@ public class TestProvider extends AndroidTestCase {
 
     // The target api annotation is needed for the call to keySet -- we wouldn't want
     // to use this in our app, but in a test it's fine to assume a higher target.
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+/*    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     void addAllContentValues(ContentValues destination, ContentValues source) {
         for (String key : source.keySet()) {
             destination.put(key, source.getAsString(key));
         }
-    }
+    }*/
 
     public void setUp() {
         deleteAllRecords();
@@ -57,22 +55,19 @@ public class TestProvider extends AndroidTestCase {
         return locationValues;
     }
     ContentValues getWeatherContentValues(long locationRowId){
-        String testDate, testDescription;
-        Double testDegrees, testWind, testHumidity, testPressure;
-        int testMin, testMax, testId;
-        long testKey;
+
 
         ContentValues weatherValues = new ContentValues();
-        weatherValues.put(WeatherEntry.COLUMN_LOC_KEY, testKey = locationRowId);
+        weatherValues.put(WeatherEntry.COLUMN_LOC_KEY,  locationRowId);
         weatherValues.put(WeatherEntry.COLUMN_DATETEXT, TEST_DATE);
-        weatherValues.put(WeatherEntry.COLUMN_DEGREES, testDegrees = 1.1);
-        weatherValues.put(WeatherEntry.COLUMN_HUMIDITY, testHumidity = 1.2);
-        weatherValues.put(WeatherEntry.COLUMN_PRESSURE, testPressure = 1.3);
-        weatherValues.put(WeatherEntry.COLUMN_MAX_TEMP, testMax = 75);
-        weatherValues.put(WeatherEntry.COLUMN_MIN_TEMP, testMin = 65);
-        weatherValues.put(WeatherEntry.COLUMN_SHORT_DESC, testDescription = "Asteroids");
-        weatherValues.put(WeatherEntry.COLUMN_WIND_SPEED, testWind = 5.5);
-        weatherValues.put(WeatherEntry.COLUMN_WEATHER_ID, testId = 321);
+        weatherValues.put(WeatherEntry.COLUMN_DEGREES, 1.1);
+        weatherValues.put(WeatherEntry.COLUMN_HUMIDITY, 1.2);
+        weatherValues.put(WeatherEntry.COLUMN_PRESSURE, 1.3);
+        weatherValues.put(WeatherEntry.COLUMN_MAX_TEMP, 75);
+        weatherValues.put(WeatherEntry.COLUMN_MIN_TEMP, 65);
+        weatherValues.put(WeatherEntry.COLUMN_SHORT_DESC, "Asteroids");
+        weatherValues.put(WeatherEntry.COLUMN_WIND_SPEED, 5.5);
+        weatherValues.put(WeatherEntry.COLUMN_WEATHER_ID, 321);
         return weatherValues;
     }
 
@@ -80,7 +75,7 @@ public class TestProvider extends AndroidTestCase {
 
         mContext.getContentResolver().delete(LocationEntry.CONTENT_URI,null,null);
         mContext.getContentResolver().delete(WeatherEntry.CONTENT_URI,null,null);
-       ContentValues locationValues = getLocationContentValues();
+        ContentValues locationValues = getLocationContentValues();
         Uri addedContentUri = mContext.getContentResolver()
                 .insert(LocationEntry.CONTENT_URI, locationValues);
         locationRowId = ContentUris.parseId(addedContentUri);
@@ -160,7 +155,7 @@ public class TestProvider extends AndroidTestCase {
                 fail("No values returned :(");
 
             }
-              // A weatherCursor is your primary interface to the query results.
+            // A weatherCursor is your primary interface to the query results.
             weatherCursor = mContext.getContentResolver().query(
                     WeatherEntry.buildWeatherLocationWithStartDate(TEST_LOCATION
                             ,TEST_DATE),  //Uri to query
@@ -195,16 +190,33 @@ public class TestProvider extends AndroidTestCase {
             }
 
         } finally {
-            weatherCursor.close();
+            if (weatherCursor != null) {
+                weatherCursor.close();
+            }
         }
 
 
     }
     public void testUpdateBoth(){
         testInsertReadProviderBoth();
-        addAllContentValues(weatherContentValues, getLocationContentValues());
+        ContentValues values2 = new ContentValues(getLocationContentValues());
+        values2.put(LocationEntry._ID,locationRowId);
+        values2.put(LocationEntry.COLUMN_CITY_NAME,"Santa's village");
 
-        mContext.getContentResolver().update(LocationEntry.CONTENT_URI,getLocationContentValues(),null,null);
+        int count = mContext.getContentResolver().update(LocationEntry.CONTENT_URI,
+                values2,LocationEntry._ID + " = ?",
+                new String[]{Long.toString(locationRowId)});
+        assertEquals(count, 1);
+
+        //addAllContentValues(weatherContentValues, getLocationContentValues());
+
+        Cursor cursor = mContext.getContentResolver().query(
+                LocationEntry.buildLocationUri(locationRowId),
+                null,null,null,null);
+        if(cursor.moveToFirst()) {
+            validateCursor(values2, cursor);
+        }
+        cursor.close();
     }
     public void testGetType(){
         //content://com.example.chris.sunshine/weather/

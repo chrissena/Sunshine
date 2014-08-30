@@ -8,12 +8,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import com.example.chris.sunshine.data.WeatherContract.LocationEntry;
 import com.example.chris.sunshine.data.WeatherContract.WeatherEntry;
 
 
 /**
+ * Content provider for weather & location data
  * Created by Chris on 29/08/2014.
  */
 public class WeatherProvider extends ContentProvider {
@@ -185,6 +187,32 @@ public class WeatherProvider extends ContentProvider {
     }
 
     @Override
+    public int bulkInsert(Uri uri, @NonNull ContentValues[] values) {
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        switch (match){
+            case WEATHER:
+                db.beginTransaction();
+                int returnCount = 0;
+                try {
+                    for (ContentValues value : values){
+                        long _id = db.insert(WeatherContract.WeatherEntry.TABLE_NAME, null, value);
+                        if (_id != -1) {
+                            returnCount++;
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+                getContext().getContentResolver().notifyChange(uri, null);
+                return returnCount;
+            default:
+                return super.bulkInsert(uri, values);
+        }
+    }
+
+    @Override
     public Uri insert(Uri uri, ContentValues contentValues) {
         final int match = sUriMatcher.match(uri);
         SQLiteDatabase db =  mOpenHelper.getWritableDatabase();
@@ -227,7 +255,7 @@ public class WeatherProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        if (number > 0) {
+        if (number >= 0) {
             getContext().getContentResolver().notifyChange(uri, null);
             return number;
         }else
