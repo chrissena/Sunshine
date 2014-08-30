@@ -1,12 +1,8 @@
 package com.example.chris.sunshine;
 
 import android.content.Intent;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,15 +13,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import org.json.JSONException;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +22,7 @@ import java.util.List;
  */
 @SuppressWarnings("WeakerAccess")
 public class ForecastFragment extends Fragment {
+    private static final String LOG_TAG = ForecastFragment.class.getSimpleName();
     private ArrayAdapter<String> mForecastAdapter;
 
     public ForecastFragment() {
@@ -70,10 +58,9 @@ public class ForecastFragment extends Fragment {
     }
 
     private void updateWeather() {
-        FetchWeatherTask fetchWeather = new FetchWeatherTask();
-        fetchWeather.execute(PreferenceManager.getDefaultSharedPreferences(getActivity())
-                .getString(getString(R.string.pref_location_key),
-                        getString(R.string.pref_location_default)));
+        FetchWeatherTask fetchWeather = new FetchWeatherTask(getActivity());
+
+        fetchWeather.execute(Utility.getPreferredLocation(getActivity()));
     }
 
     @Override
@@ -103,94 +90,5 @@ public class ForecastFragment extends Fragment {
         return rootView;
     }
 
-    private class FetchWeatherTask extends AsyncTask<String, Void, String[]>
-    {
-        @Override
-        protected void onPostExecute(String[] forecast) {
 
-            if (forecast != null) {
-                mForecastAdapter.clear();
-                for (String dayForecast : forecast) {
-                    mForecastAdapter.add(dayForecast);
-                }
-            }
-        }
-
-        private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
-        @Override
-        protected String[] doInBackground(String... params) {
-
-            HttpURLConnection weatherHttpConnection = null;
-            BufferedReader reader = null;
-            String weatherJson;
-            String location = params[0],
-                    days ="7",
-                    units = "metric",
-                    mode = "json";
-            String[] formattedArray = null;
-
-            try {
-                //Connect to server & create stream
-                Uri.Builder uriBuilder =
-                        Uri.parse(getString(R.string.weatherApiBaseUrl)).buildUpon();
-
-                uriBuilder.appendQueryParameter("q",location)
-                        .appendQueryParameter("mode",mode)
-                        .appendQueryParameter("units",units)
-                        .appendQueryParameter("cnt",days);
-
-
-                String urlString = uriBuilder.build().toString();
-                URL weatherApiUrl= new URL(urlString);
-                weatherHttpConnection =(HttpURLConnection) weatherApiUrl.openConnection();
-                weatherHttpConnection.setRequestMethod("GET");
-                weatherHttpConnection.connect();
-
-                //Create BufferedStream and Buffered Reader
-
-                BufferedInputStream bufferedStream =
-                        new BufferedInputStream(weatherHttpConnection.getInputStream());
-
-                //Read stream lines to stringBuilder
-
-                reader = new BufferedReader(new InputStreamReader(bufferedStream));
-                StringBuilder builder = new StringBuilder();
-
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    builder.append(line);
-                }
-                weatherJson = builder.toString();
-                boolean metric = (PreferenceManager.getDefaultSharedPreferences(getActivity())
-                        .getString(
-                                getString(R.string.pref_units_key),
-                                "Metric"))
-                        .equalsIgnoreCase("Metric");
-
-                formattedArray =
-                        WeatherDataParser.getWeatherDataFromJson(
-                                weatherJson,metric);
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-                Log.e(LOG_TAG, "UrlError - fetchJson", e);
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Connection error - fetchJson", e);
-
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, "Error parsing JSON - fetchJson", e);
-            }
-            finally {
-                if (weatherHttpConnection != null) weatherHttpConnection.disconnect();
-                if (reader != null) try {
-                    reader.close();
-                } catch (IOException e) {
-                    Log.e(LOG_TAG, "Error closing stream reader - fetchJson", e);
-                }
-            }
-            //Return formatted Json String[]
-            return formattedArray;
-        }
-    }
 }

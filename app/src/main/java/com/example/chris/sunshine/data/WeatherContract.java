@@ -20,6 +20,9 @@ import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Defines table and column names for the weather database.
  */
@@ -73,6 +76,7 @@ public class WeatherContract {
 
     /* Inner class that defines the table contents of the weather table */
     public static final class WeatherEntry implements BaseColumns {
+        public static final String DATE_FORMAT = "yyyyMMdd";
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_WEATHER).build();
 
@@ -137,6 +141,11 @@ public class WeatherContract {
         }
         public static String getStartDateFromUri(Uri uri) {
             return uri.getQueryParameter(COLUMN_DATETEXT);
+        }
+
+        public static String getDbDateString(Date date){
+            SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+            return sdf.format(date);
         }
     }
 }
