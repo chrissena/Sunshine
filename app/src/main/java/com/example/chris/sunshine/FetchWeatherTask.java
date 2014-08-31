@@ -7,7 +7,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.example.chris.sunshine.data.WeatherContract;
@@ -30,8 +29,10 @@ class FetchWeatherTask extends AsyncTask<String, Void, Void>
 {
     private Context mContext;
 
+
     FetchWeatherTask(Context context){
         mContext = context;
+
     }
 
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
@@ -45,7 +46,7 @@ class FetchWeatherTask extends AsyncTask<String, Void, Void>
                 days ="14",
                 units = "metric",
                 mode = "json";
-        String[] formattedArray = null;
+
 
         try {
             //Connect to server & create stream
@@ -57,7 +58,6 @@ class FetchWeatherTask extends AsyncTask<String, Void, Void>
                     .appendQueryParameter("units",units)
                     .appendQueryParameter("cnt",days);
 
-
             String urlString = uriBuilder.build().toString();
             URL weatherApiUrl= new URL(urlString);
             weatherHttpConnection =(HttpURLConnection) weatherApiUrl.openConnection();
@@ -65,39 +65,29 @@ class FetchWeatherTask extends AsyncTask<String, Void, Void>
             weatherHttpConnection.connect();
 
             //Create BufferedStream and Buffered Reader
-
             BufferedInputStream bufferedStream =
                     new BufferedInputStream(weatherHttpConnection.getInputStream());
 
-            //Read stream lines to stringBuilder
-
+            //Read stream lines to stringBuilder and make JSON String
             reader = new BufferedReader(new InputStreamReader(bufferedStream));
             StringBuilder builder = new StringBuilder();
-
-
             String line;
-            while ((line = reader.readLine()) != null) {
-                builder.append(line);
-            }
+            while ((line = reader.readLine()) != null)  builder.append(line);
             weatherJson = builder.toString();
-            boolean metric = (PreferenceManager.getDefaultSharedPreferences(mContext)
-                    .getString(
-                            mContext.getString(R.string.pref_units_key),
-                            "Metric"))
-                    .equalsIgnoreCase("Metric");
 
-            parser  = new WeatherDataParser(weatherJson,Integer.parseInt(days),locationQuery,metric);
+            //Instantiate a JSON parser to retrieve data
+            parser  = new WeatherDataParser(weatherJson,Integer.parseInt(days),locationQuery);
 
-            formattedArray = parser.formattedArray;
-            long locationId  = addLocation(parser.cityName, locationQuery,
+            // Add data in parser to database
+            long locationId  = addLocation(locationQuery,parser.cityName,
                     parser.cityLatitude,parser.cityLongitude);
             parser.updateLocationId(locationId);
-
+            //update weather forecasts in parser with locationId from db
             Vector<ContentValues> wVector = parser.weatherVector;
             if (wVector.size() > 0) {
                 ContentValues[] weatherArray = new ContentValues[wVector.size()];
                 wVector.toArray(weatherArray);
-                long weatherId = addWeather(weatherArray);
+                addWeather(weatherArray);
             }
 
             Log.d(LOG_TAG,"FetchWeatherTask Complete " + wVector.size() + " Inserted");
@@ -122,11 +112,9 @@ class FetchWeatherTask extends AsyncTask<String, Void, Void>
                 Log.e(LOG_TAG, "Error closing stream - fetchJson", e);
             }
         }
-
-        //Return formatted Json String[]
-        //return formattedArray;
         return null;
     }
+
     private long addLocation (String locationSetting,
                               String cityName, double lat, double lon){
         Log.v(LOG_TAG,String.format("inserting %s, with coord: %s,%s",cityName,lat,lon));
@@ -147,6 +135,17 @@ class FetchWeatherTask extends AsyncTask<String, Void, Void>
         values.put(WeatherContract.LocationEntry.COLUMN_COORD_LONG,lon);
         Uri uri = resolver.insert(WeatherContract.LocationEntry.CONTENT_URI, values);
         return ContentUris.parseId(uri);
+    }
+
+    @Override
+    protected void onPostExecute(Void result ) {
+     /*   if (result != null) {
+            mForecastAdapter.clear();
+            for(String dayForecastStr : result) {
+                mForecastAdapter.add(dayForecastStr);
+            }
+            // New data is back from the server.  Hooray!
+        }*/
     }
 
     private long addWeather (ContentValues[] weatherValues){

@@ -20,6 +20,7 @@ import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -142,10 +143,28 @@ public class WeatherContract {
         public static String getStartDateFromUri(Uri uri) {
             return uri.getQueryParameter(COLUMN_DATETEXT);
         }
-
+        /**
+         * Converts the uniix timestamp to a DB friendly representation of date.
+         * @param  date The input date
+         * @return a DB-friendly representation of the date*/
         public static String getDbDateString(Date date){
             SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
             return sdf.format(date);
+        }
+
+        /**
+         * Converts a dateText to a long Unix time representing the dats
+        * @param dateText the input date string
+        * @return Date object
+         * */
+        public static  Date getDateFromDb (String dateText){
+            SimpleDateFormat dbDateFormat = new SimpleDateFormat(DATE_FORMAT);
+            try{
+                return dbDateFormat.parse(dateText);
+            }catch (ParseException e){
+                e.printStackTrace();
+                return null;
+            }
         }
     }
 }

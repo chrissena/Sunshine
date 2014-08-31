@@ -65,8 +65,6 @@ public class WeatherProvider extends ContentProvider {
             selectionArgs = new String[]{locationSetting, startDate};
             selection = sLocationSettingWIthStartDateSelection;
         }
-
-
         return  sWeatherByLocationSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,selection,selectionArgs,null,null,sortOder);
     }
@@ -79,12 +77,9 @@ public class WeatherProvider extends ContentProvider {
         selectionArgs = new String[]{locationSetting, date};
         selection = sLocationSettingWIthDateSelection;
 
-
-
         return  sWeatherByLocationSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,selection,selectionArgs,null,null,sortOder);
     }
-
 
     private static UriMatcher buildUriMatcher(){
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -110,7 +105,7 @@ public class WeatherProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection,
                         String selection, String[] selectionArgs, String sortOrder) {
         //Here's the switch statement that, given a URI, will determine what kind of request
-        //and query the database accord
+        //and query the database accordingly
         Cursor retCursor;
         switch (sUriMatcher.match(uri)){
             //"weather/*/*"
