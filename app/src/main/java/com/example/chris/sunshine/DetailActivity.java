@@ -94,6 +94,7 @@ public class DetailActivity extends ActionBarActivity {
         private double mHigh;
         private double mLow;
         private String mLocation;
+        private String mForecastSummary;
 
         private static final String[] FORECAST_COLUMNS = {
            /*In this case the id needs to be fully qualified with a table name, since
@@ -122,6 +123,12 @@ public class DetailActivity extends ActionBarActivity {
         }
 
         @Override
+        public void onSaveInstanceState(Bundle outState) {
+            outState.putString(WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING, mLocation);
+            super.onSaveInstanceState(outState);
+        }
+
+        @Override
         public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
             super.onCreateOptionsMenu(menu, inflater);
             inflater.inflate(R.menu.detail_fragment,menu);
@@ -131,7 +138,7 @@ public class DetailActivity extends ActionBarActivity {
                     = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain")
-                    .putExtra(Intent.EXTRA_TEXT,mDate + SHARE_HASHTAG)
+                    .putExtra(Intent.EXTRA_TEXT, mForecastSummary + SHARE_HASHTAG)
                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
             if(shareActionProvider != null){
                 shareActionProvider.setShareIntent(shareIntent);
@@ -143,6 +150,9 @@ public class DetailActivity extends ActionBarActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+            if (savedInstanceState != null) {
+                mLocation = savedInstanceState.getString(mLocation);
+            }
             mDate = getActivity().getIntent().getExtras().getString(Intent.EXTRA_TEXT);
 
 
@@ -200,8 +210,14 @@ public class DetailActivity extends ActionBarActivity {
                 TextView lowView = (TextView) getActivity().findViewById(R.id.low_textview);
                 dateView.setText(Utility.formatDate(mDate));
                 detailView.setText(mDetail);
-                highView.setText(Utility.formatTemperature(getActivity(), mHigh));
-                lowView.setText(Utility.formatTemperature(getActivity(), mLow));
+                highView.setText(Utility.formatTemperature(getActivity(), mHigh)+"\u00B0");
+                lowView.setText(Utility.formatTemperature(getActivity(), mLow)+"\u00B0");
+
+                mForecastSummary = String.format("Forecast for %s on %s: %s - %s/%s",
+                        mLocation,
+                        dateView.getText(),
+                        detailView.getText(),
+                        highView.getText(),lowView.getText());
             }
         }
 

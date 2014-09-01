@@ -126,7 +126,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                     case COL_WEATHER_MIN_TEMP:{
                         //we have to do some formatting and possibly a conversion.
                         ((TextView) view).setText(Utility.formatTemperature
-                                (getActivity(),cursor.getDouble(columnIndex)));
+                                (getActivity(),cursor.getDouble(columnIndex))+"\u00B0");
                         return true;
                     }
                     case COL_WEATHER_DATE:{
