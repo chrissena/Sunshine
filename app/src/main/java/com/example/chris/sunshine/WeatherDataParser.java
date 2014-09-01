@@ -19,28 +19,24 @@ class WeatherDataParser {
     double cityLongitude;
     Vector<ContentValues> weatherVector = new Vector<ContentValues>();
     String cityName;
-    final String locationSetting;
 
 
     // private fields
     private final String mForecastJsonStr;
-    private final int mNumDays;
+
     
 
-    WeatherDataParser(String forecastJsonStr, int numDays,
-                      String location) throws JSONException{
+    WeatherDataParser(String forecastJsonStr) throws JSONException{
 
 
         mForecastJsonStr = forecastJsonStr;
-        mNumDays = numDays;
-        locationSetting = location;
 
         getWeatherData();
     }
     /* The date/time conversion code is going to be moved outside the AsyncTask later,
      * so for convenience we're breaking it out into its own method now.
      */
-public void updateLocationId(long locationId){
+ void updateLocationId(long locationId){
     for (ContentValues forecast: weatherVector){
         forecast.put(WeatherEntry.COLUMN_LOC_KEY,locationId);
     }
@@ -52,7 +48,7 @@ public void updateLocationId(long locationId){
      * Fortunately parsing is easy:  constructor takes the JSON string and converts it
      * into an Object hierarchy for us.
      */
-    public String[] getWeatherData()
+    private void getWeatherData()
             throws JSONException {
 
         // Location information
@@ -61,7 +57,6 @@ public void updateLocationId(long locationId){
         final String OWM_COORD = "coord";
         final String OWM_COORD_LAT = "lat";
         final String OWM_COORD_LONG = "lon";
-        final String OWM_CITY_ID = "id";
 
         // Weather information.  Each day's forecast info is an element of the "list" array.
         final String OWM_LIST = "list";
@@ -139,6 +134,6 @@ public void updateLocationId(long locationId){
                 weatherVector.add(weatherValues);
             }
         }
-        return null;
+
     }
 }

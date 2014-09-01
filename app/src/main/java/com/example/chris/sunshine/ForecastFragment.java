@@ -51,13 +51,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             WeatherEntry.COLUMN_MIN_TEMP,
             LocationEntry.COLUMN_LOCATION_SETTING
     };
-    //These indices are tied to FORECAST_COLUMNS. If FORECAST_COLUMNS changes, these must change.
-    public static final int COL_WEATHER_ID = 0;
     public static final int COL_WEATHER_DATE = 1;
-    public static final int COL_WEATHER_DESC = 2;
     public static final int COL_WEATHER_MAX_TEMP = 3;
     public static final int COL_WEATHER_MIN_TEMP = 4;
-    public static final int COL_WEATHER_LOCATION_SETTING = 5;
 
     private static final String LOG_TAG = ForecastFragment.class.getSimpleName();
     private SimpleCursorAdapter mForecastAdapter;

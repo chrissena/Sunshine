@@ -9,9 +9,10 @@ import java.text.DateFormat;
 import java.util.Date;
 
 /**
+ * Utility class containing various helper methods used throughout the application.
  * Created by Chris on 30/08/2014.
  */
-public class Utility {
+class Utility {
 
     static  String formatTemperature(Context context, double temperature){
                 double temp;
@@ -28,7 +29,7 @@ public class Utility {
                 .getString(context.getString(R.string.pref_location_key),
                         context.getString(R.string.pref_location_default));
     }
-    public static boolean isMetric(Context context){
+    private static boolean isMetric(Context context){
        return (PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(
                         context.getString(R.string.pref_units_key),

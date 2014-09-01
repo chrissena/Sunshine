@@ -172,7 +172,7 @@ public class DetailActivity extends ActionBarActivity {
         @Override
         public void onResume() {
             super.onResume();
-            if (mLocation != Utility.getPreferredLocation(getActivity())) {
+            if (!mLocation.equals(Utility.getPreferredLocation(getActivity()))) {
                 getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
             }
         }

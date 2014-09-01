@@ -23,11 +23,12 @@ import java.net.URL;
 import java.util.Vector;
 
 /**
+ * AsyncTask to retrieve data from OpenWeatherMap API
  * Created by Chris on 30/08/2014.
  */
 class FetchWeatherTask extends AsyncTask<String, Void, Void>
 {
-    private Context mContext;
+    private final Context mContext;
 
 
     FetchWeatherTask(Context context){
@@ -76,7 +77,7 @@ class FetchWeatherTask extends AsyncTask<String, Void, Void>
             weatherJson = builder.toString();
 
             //Instantiate a JSON parser to retrieve data
-            parser  = new WeatherDataParser(weatherJson,Integer.parseInt(days),locationQuery);
+            parser  = new WeatherDataParser(weatherJson);
 
             // Add data in parser to database
             long locationId  = addLocation(locationQuery,parser.cityName,
@@ -117,6 +118,7 @@ class FetchWeatherTask extends AsyncTask<String, Void, Void>
 
     private long addLocation (String locationSetting,
                               String cityName, double lat, double lon){
+
         Log.v(LOG_TAG,String.format("inserting %s, with coord: %s,%s",cityName,lat,lon));
         ContentResolver resolver = mContext.getContentResolver();
         Cursor cursor = resolver.query(WeatherContract.LocationEntry.CONTENT_URI,
@@ -124,9 +126,15 @@ class FetchWeatherTask extends AsyncTask<String, Void, Void>
                 WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ?",
                 new String[]{locationSetting},
                 null);
-        if (cursor.moveToFirst()) {
-            Log.v(LOG_TAG, "Found it in the database!");
-            return cursor.getLong(cursor.getColumnIndex(WeatherContract.LocationEntry._ID));
+        try {
+            if (cursor.moveToFirst()) {
+                Log.v(LOG_TAG, "Found it in the database!");
+                return cursor.getLong(cursor.getColumnIndex(WeatherContract.LocationEntry._ID));
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
         ContentValues values = new ContentValues();
         values.put(WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING,locationSetting);
@@ -148,6 +156,7 @@ class FetchWeatherTask extends AsyncTask<String, Void, Void>
         }*/
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     private long addWeather (ContentValues[] weatherValues){
         Log.v(LOG_TAG,String.format("inserting %s forecasts", weatherValues.length));
         ContentResolver resolver = mContext.getContentResolver();
