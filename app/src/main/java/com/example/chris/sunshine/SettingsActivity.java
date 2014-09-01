@@ -1,6 +1,7 @@
 package com.example.chris.sunshine;
 
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -32,7 +33,8 @@ public class SettingsActivity extends PreferenceActivity
         // For all preferences, attach an OnPreferenceChangeListener so the UI summary can be
         // updated when the preference changes.
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_location_key)));
-        bindPreferenceSummaryToValue(findPreference("units"));
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_units_key)));
+
     }
 
     /**
@@ -47,16 +49,18 @@ public class SettingsActivity extends PreferenceActivity
 
         // Trigger the listener immediately with the preference's
         // current value.
-        onPreferenceChange(preference,
-                PreferenceManager
-                        .getDefaultSharedPreferences(preference.getContext())
-                        .getString(preference.getKey(), ""));
+        if (!(preference instanceof CheckBoxPreference)) {
+            onPreferenceChange(preference,
+                    PreferenceManager
+                            .getDefaultSharedPreferences(preference.getContext())
+                            .getString(preference.getKey(), ""));
+        }
         mBindingPreference = false;
     }
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object value) {
-        String stringValue = value.toString();
+        String stringValue = String.valueOf(value);
         if (!mBindingPreference){
             if(preference.getKey().equals((getString(R.string.pref_location_key)))){
                 FetchWeatherTask weatherTask = new FetchWeatherTask(this);

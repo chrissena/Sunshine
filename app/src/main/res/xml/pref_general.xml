@@ -18,8 +18,4 @@
         android:entries="@array/units_array_label"
         android:entryValues="@array/units_array"/>
 
-
-
-
-
 </PreferenceScreen>

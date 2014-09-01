@@ -145,27 +145,14 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         mForecastListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                double high;
-                double low;
-                String forecast;
                 String date;
 
                 Intent detailIntent = new Intent(getActivity(),DetailActivity.class);
                 SimpleCursorAdapter adapter = (SimpleCursorAdapter) adapterView.getAdapter();
                 Cursor cursor = adapter.getCursor();
                 cursor.moveToPosition(position);
-                high = cursor.getDouble(COL_WEATHER_MAX_TEMP);
-                low = cursor.getDouble(COL_WEATHER_MIN_TEMP);
-                forecast = cursor.getString(COL_WEATHER_DESC);
                 date = cursor.getString(COL_WEATHER_DATE);
-
-                detailIntent.putExtra(Intent.EXTRA_TEXT, String.format
-                        ("%s - %s - %s/%s",
-                                Utility.formatDate(date),
-                                forecast,
-                                Utility.formatTemperature(getActivity(), high),
-                                Utility.formatTemperature(getActivity(), low))
-                        );
+                detailIntent.putExtra(Intent.EXTRA_TEXT,date);
                 startActivity(detailIntent);
 
             }

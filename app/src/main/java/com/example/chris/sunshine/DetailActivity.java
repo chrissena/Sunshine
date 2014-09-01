@@ -1,10 +1,15 @@
 package com.example.chris.sunshine;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
@@ -17,6 +22,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.chris.sunshine.data.WeatherContract;
 
 
 @SuppressWarnings("WeakerAccess")
@@ -78,11 +85,39 @@ public class DetailActivity extends ActionBarActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
+    public static class PlaceholderFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-        private String mForecast;
+        private static final int DETAIL_LOADER = 0;
+        private String mDate;
         private static final String SHARE_HASHTAG = " #SunshineApp";
-        private final String LOG_TAG = PlaceholderFragment.class.getSimpleName();
+        private String mDetail;
+        private double mHigh;
+        private double mLow;
+        private String mLocation;
+
+        private static final String[] FORECAST_COLUMNS = {
+           /*In this case the id needs to be fully qualified with a table name, since
+           * the content provider joins the location & weather tables in the background
+           * (both have an _id column)
+           * On the one hand, that's annoying. On the other, you can search the weather table
+           * using the postalcode which is only in the Location table. So the convenience
+           * is worth it.*/
+                WeatherContract.WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID,
+                WeatherContract.WeatherEntry.COLUMN_DATETEXT,
+                WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
+                WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
+                WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
+                WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING
+        };
+        //These indices are tied to FORECAST_COLUMNS. If FORECAST_COLUMNS changes, these must change.
+
+
+        public static final int COL_WEATHER_DESC = 2;
+        public static final int COL_WEATHER_MAX_TEMP = 3;
+        public static final int COL_WEATHER_MIN_TEMP = 4;
+
+
+        private static final String LOG_TAG = ForecastFragment.class.getSimpleName();
         public PlaceholderFragment() {
         }
 
@@ -96,7 +131,7 @@ public class DetailActivity extends ActionBarActivity {
                     = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain")
-                    .putExtra(Intent.EXTRA_TEXT,mForecast + SHARE_HASHTAG)
+                    .putExtra(Intent.EXTRA_TEXT,mDate + SHARE_HASHTAG)
                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
             if(shareActionProvider != null){
                 shareActionProvider.setShareIntent(shareIntent);
@@ -105,15 +140,74 @@ public class DetailActivity extends ActionBarActivity {
             }
         }
 
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            mDate = getActivity().getIntent().getExtras().getString(Intent.EXTRA_TEXT);
+
+
+        }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-            mForecast = getActivity().getIntent().getExtras().getString(Intent.EXTRA_TEXT);
-            ((TextView) rootView.findViewById(R.id.forecast_textview)).setText(mForecast);
+
+
+            ((TextView) rootView.findViewById(R.id.forecast_textview)).setText(mDate);
             setHasOptionsMenu(true);
             return rootView;
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            if (mLocation != Utility.getPreferredLocation(getActivity())) {
+                getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
+            }
+        }
+
+        @Override
+        public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
+            getLoaderManager().initLoader(DETAIL_LOADER, null, this);
+
+        }
+
+        @Override
+        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+            mLocation = Utility.getPreferredLocation(getActivity());
+            return new CursorLoader(getActivity(),
+                    WeatherContract.WeatherEntry.buildWeatherLocationWithDate(mLocation,mDate),
+                    FORECAST_COLUMNS,
+                    null,
+                    null,
+                    null
+            );
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+            if (cursor.moveToFirst()) {
+                mHigh = cursor.getDouble(COL_WEATHER_MAX_TEMP);
+                mLow = cursor.getDouble(COL_WEATHER_MIN_TEMP);
+                mDetail = cursor.getString(COL_WEATHER_DESC);
+
+
+                TextView dateView = (TextView) getActivity().findViewById(R.id.date_textview);
+                TextView detailView = (TextView) getActivity().findViewById(R.id.forecast_textview);
+                TextView highView = (TextView) getActivity().findViewById(R.id.high_textview);
+                TextView lowView = (TextView) getActivity().findViewById(R.id.low_textview);
+                dateView.setText(Utility.formatDate(mDate));
+                detailView.setText(mDetail);
+                highView.setText(Utility.formatTemperature(getActivity(), mHigh));
+                lowView.setText(Utility.formatTemperature(getActivity(), mLow));
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> cursorLoader) {
+
         }
     }
 }
