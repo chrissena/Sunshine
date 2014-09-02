@@ -9,7 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.example.chris.sunshine.data.WeatherContract.LocationEntry;
 import com.example.chris.sunshine.data.WeatherContract.WeatherEntry;
@@ -51,12 +50,14 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             WeatherEntry.COLUMN_MIN_TEMP,
             LocationEntry.COLUMN_LOCATION_SETTING
     };
+    public static final int COL_WEATHER_ID = 0;
     public static final int COL_WEATHER_DATE = 1;
+    public static final int COL_WEATHER_DESC = 2;
     public static final int COL_WEATHER_MAX_TEMP = 3;
     public static final int COL_WEATHER_MIN_TEMP = 4;
 
     private static final String LOG_TAG = ForecastFragment.class.getSimpleName();
-    private SimpleCursorAdapter mForecastAdapter;
+    private ForecastAdapter mForecastAdapter;
 
     public ForecastFragment() {
     }
@@ -96,45 +97,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        mForecastAdapter = new SimpleCursorAdapter(
+        mForecastAdapter = new ForecastAdapter(
                 getActivity(),
-                R.layout.list_item_forecast,
                 null,
-                new String[]{
-                        WeatherEntry.COLUMN_DATETEXT,
-                        WeatherEntry.COLUMN_SHORT_DESC,
-                        WeatherEntry.COLUMN_MAX_TEMP,
-                        WeatherEntry.COLUMN_MIN_TEMP
-                },
-                new int[]{
-                        R.id.list_item_date_textview,
-                        R.id.list_item_forecast_textview,
-                        R.id.list_item_high_textview,
-                        R.id.list_item_low_textview
-                },
                 0
         );
-        mForecastAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-            @Override
-            public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-                switch (columnIndex){
-                    case COL_WEATHER_MAX_TEMP:
-                    case COL_WEATHER_MIN_TEMP:{
-                        //we have to do some formatting and possibly a conversion.
-                        ((TextView) view).setText(Utility.formatTemperature
-                                (getActivity(),cursor.getDouble(columnIndex))+"\u00B0");
-                        return true;
-                    }
-                    case COL_WEATHER_DATE:{
-                        String dateString = cursor.getString(columnIndex);
-                        TextView dateView = (TextView) view;
-                        dateView.setText(Utility.formatDate(dateString));
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
 
         ListView mForecastListView = (ListView) rootView.findViewById(R.id.listview_forecast);
         mForecastListView.setAdapter(mForecastAdapter);
@@ -144,7 +111,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 String date;
 
                 Intent detailIntent = new Intent(getActivity(),DetailActivity.class);
-                SimpleCursorAdapter adapter = (SimpleCursorAdapter) adapterView.getAdapter();
+                CursorAdapter adapter = (CursorAdapter) adapterView.getAdapter();
                 Cursor cursor = adapter.getCursor();
                 cursor.moveToPosition(position);
                 date = cursor.getString(COL_WEATHER_DATE);
