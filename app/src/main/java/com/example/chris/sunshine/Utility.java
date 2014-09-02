@@ -17,7 +17,7 @@ import java.util.Date;
  * Created by Chris on 30/08/2014.
  */
 class Utility {
-    // Format used for storing dates in the database.  ALso used for converting those strings
+    // Format used for storing dates in the database.  Also used for converting those strings
 // back into date objects for comparison/processing.
     public static final String DATE_FORMAT = "yyyyMMdd";
 
@@ -28,7 +28,7 @@ class Utility {
         }else {
             temp = temperature;
         }
-        return String.format("%.0f\u00B0", temp);
+        return context.getString(R.string.format_temperature,temp);
     }
     public static String getPreferredLocation(Context context)
     {
@@ -87,12 +87,28 @@ class Utility {
                 return getDayName(context, dateStr);
             } else {
                 // Otherwise, use the form "Mon Jun 3"
-                SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE MMM dd");
-                return shortenedDateFormat.format(inputDate);
+                SimpleDateFormat dayFormat = new SimpleDateFormat("d");
+                SimpleDateFormat monthFormat = new SimpleDateFormat("MMM");
+                SimpleDateFormat dayNameFormat = new SimpleDateFormat("EEE");
+                return dayNameFormat.format(inputDate) + " " +
+                        dayFormat.format(inputDate)
+                        + getDayOfMonthSuffix(inputDate)+ " " + monthFormat.format(inputDate);
             }
         }
-    }
 
+    }
+    static String getDayOfMonthSuffix(Date date) {
+        int n = Integer.parseInt((new SimpleDateFormat("d")).format(date));
+        if (n >= 11 && n <= 13) {
+            return "th";
+        }
+        switch (n % 10) {
+            case 1:  return "st";
+            case 2:  return "nd";
+            case 3:  return "rd";
+            default: return "th";
+        }
+    }
     /**
      * Given a day, returns just the name to use for that day.
      * E.g "today", "tomorrow", "wednesday".
@@ -144,8 +160,12 @@ class Utility {
         SimpleDateFormat dbDateFormat = new SimpleDateFormat(Utility.DATE_FORMAT);
         try {
             Date inputDate = dbDateFormat.parse(dateStr);
-            SimpleDateFormat monthDayFormat = new SimpleDateFormat("MMMM dd");
-            String monthDayString = monthDayFormat.format(inputDate);
+            SimpleDateFormat dayFormat = new SimpleDateFormat("d");
+            SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM");
+
+            String monthDayString = dayFormat.format(inputDate) +
+                    getDayOfMonthSuffix(inputDate) + " " +
+                    monthFormat.format(inputDate);
             return monthDayString;
         } catch (ParseException e) {
             e.printStackTrace();

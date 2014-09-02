@@ -86,7 +86,7 @@ public class ForecastAdapter extends CursorAdapter {
         // Read low temperature from cursor
         double low = cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP);
         //Find TextView and set formatted low temperature on it
-        holder.lowTextView.setText(Utility.formatTemperature(context,high));
+        holder.lowTextView.setText(Utility.formatTemperature(context,low));
 
     }
 }
