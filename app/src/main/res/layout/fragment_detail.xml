@@ -7,102 +7,102 @@
     android:layout_width="match_parent"
     android:id="@+id/scrollView">
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:layout_height="wrap_content"
-    android:layout_width="fill_parent"
-    android:gravity="center_vertical"
-    android:padding="30dp"
-    tools:context=".DetailActivity$PlaceholderFragment">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:textSize="20sp"
-        android:gravity="center_vertical"
-        android:id="@+id/day_textview"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:textSize="20sp"
-        android:gravity="center_vertical"
-        android:id="@+id/date_textview"/>
-
     <LinearLayout
-        android:paddingTop="10dp"
-        android:orientation="horizontal"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent">
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="30sp"
-                android:gravity="center_vertical"
-                android:id="@+id/high_textview"
-                android:padding="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:textSize="25sp"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:id="@+id/low_textview"
-                android:padding="5dp"/>
-        </LinearLayout>
-
-        <LinearLayout
+        android:layout_width="fill_parent"
+        android:gravity="center_vertical"
+        android:padding="30dp"
+        tools:context=".DetailActivity$PlaceholderFragment">
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="2"
-            android:orientation="vertical"
-            android:layout_gravity="center"
-            android:gravity="center">
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:textSize="20sp"
+            android:gravity="center_vertical"
+            android:id="@+id/day_textview"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:textSize="20sp"
+            android:gravity="center_vertical"
+            android:id="@+id/date_textview"/>
 
-            <ImageView
-                android:id="@+id/detail_art"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:paddingTop="10dp"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
 
-            <TextView
-                android:id="@+id/forecast_textview"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="30sp"
+                    android:gravity="center_vertical"
+                    android:id="@+id/high_textview"
+                    android:padding="5dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:textSize="25sp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:id="@+id/low_textview"
+                    android:padding="5dp"/>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_height="wrap_content"
-                android:padding="10dp"/>
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/detail_art"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/forecast_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"/>
+            </LinearLayout>
+
         </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:gravity="center_vertical"
+            android:id="@+id/humidity_textview" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:gravity="center_vertical"
+            android:id="@+id/wind_textview" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:gravity="center_vertical"
+            android:id="@+id/pressure_textview" />
 
     </LinearLayout>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:gravity="center_vertical"
-        android:id="@+id/humidity_textview" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:gravity="center_vertical"
-        android:id="@+id/wind_textview" />
-    <TextView
-                android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:gravity="center_vertical"
-        android:id="@+id/pressure_textview" />
-
-</LinearLayout>
-    </ScrollView>
+</ScrollView>
