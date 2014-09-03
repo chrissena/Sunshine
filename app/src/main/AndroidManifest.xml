@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.chris.sunshine" >
+    package="com.example.chris.sunshine">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -9,10 +9,11 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/ForecastTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -37,9 +38,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.chris.sunshine.MainActivity" />
         </activity>
+
         <provider
-            android:authorities="com.example.chris.sunshine.data"
             android:name=".data.WeatherProvider"
+            android:authorities="com.example.chris.sunshine.data"
             tools:ignore="ExportedContentProvider" />
     </application>
 

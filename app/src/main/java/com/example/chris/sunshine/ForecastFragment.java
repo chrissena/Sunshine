@@ -36,6 +36,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public static final int COL_WEATHER_MAX_TEMP = 3;
     public static final int COL_WEATHER_MIN_TEMP = 4;
     private static final int FORECAST_LOADER = 0;
+
     //For the forecast view we're showing only a small subset of the stored data.
     //Specify the columns we need.
     private static final String[] FORECAST_COLUMNS = {
@@ -58,9 +59,18 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private static final String POSITION_KEY = "position";
     private int mPosition;
     private String mLocation;
+    private boolean mUseTodayLayout = true;
     private ForecastAdapter mForecastAdapter;
     private ListView mForecastListView;
     public ForecastFragment() {
+    }
+
+    public void setTwoPaneMode(boolean twoPaneMode) {
+
+        if (mForecastAdapter != null) {
+            mUseTodayLayout = !twoPaneMode;
+            mForecastAdapter.setUseTodayLayout(!twoPaneMode);
+        }
     }
 
     @Override
@@ -112,7 +122,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 null,
                 0
         );
-
+        mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
         mForecastListView = (ListView) rootView.findViewById(R.id.listview_forecast);
         mForecastListView.setAdapter(mForecastAdapter);
         mForecastListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -129,6 +139,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         });
         if (savedInstanceState != null && savedInstanceState.containsKey(POSITION_KEY)) {
             mPosition = savedInstanceState.getInt(POSITION_KEY);
+        } else {
+            mPosition = -1;
         }
         return rootView;
 
@@ -179,6 +191,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         if (mPosition != ListView.INVALID_POSITION) {
             mForecastListView.setSelection(mPosition);
         }
+
     }
 
     @Override

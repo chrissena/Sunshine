@@ -4,20 +4,29 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/touch_selector"
+    android:baselineAligned="false"
     android:gravity="center_vertical"
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:orientation="horizontal"
     android:padding="16dp">
 
-    <ImageView
-        android:id="@+id/list_item_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <FrameLayout
+        android:layout_width="60dp"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/list_item_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+    </FrameLayout>
+
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="7"
+        android:fontFamily="sans-serif-condensed"
         android:gravity="start"
         android:orientation="vertical"
         android:padding="5dp">
@@ -27,20 +36,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:padding="2dp" />
+            android:fontFamily="sans-serif-condensed"
+            android:padding="2dp"
+            android:textSize="?android:textAppearanceLarge" />
 
         <TextView
             android:id="@+id/list_item_forecast_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:padding="2dp" />
+            android:fontFamily="sans-serif-condensed"
+            android:padding="2dp"
+            android:textSize="?android:textAppearanceSmall" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
+        android:layout_weight="5"
         android:gravity="end"
         android:orientation="vertical"
         android:padding="5dp">
@@ -50,16 +64,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:fontFamily="sans-serif-condensed"
             android:gravity="end"
-            android:padding="2dp" />
+            android:padding="2dp"
+            android:textSize="?android:textAppearanceLarge" />
 
         <TextView
             android:id="@+id/list_item_low_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:fontFamily="sans-serif-condensed"
             android:gravity="end"
-            android:padding="2dp" />
+            android:padding="2dp"
+            android:textSize="?android:textAppearanceSmall" />
 
     </LinearLayout>
 
