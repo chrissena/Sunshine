@@ -97,7 +97,7 @@
         android:gravity="center_vertical"
         android:id="@+id/wind_textview" />
     <TextView
-        android:layout_width="wrap_content"
+                android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"

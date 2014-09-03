@@ -112,7 +112,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         if (savedInstanceState != null) {
             mLocation = savedInstanceState.getString(mLocation);
         }
-        mDate = getActivity().getIntent().getExtras().getString(DetailActivity.DATE_KEY);
+
+        if (getArguments() != null && getArguments().containsKey(DetailActivity.DATE_KEY ))  {
+            mDate = getArguments().getString(DetailActivity.DATE_KEY );
+        }
 
 
     }
@@ -139,8 +142,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onResume() {
         super.onResume();
-        Intent intent = getActivity().getIntent();
-        if (intent != null && intent.hasExtra(DetailActivity.DATE_KEY) &&
+        //If fragment arguments are not null, contain the date and the location has changed.
+        //Then restart the loader with new location.
+        if (getArguments() != null && getArguments().containsKey(DetailActivity.DATE_KEY) &&
                 !mLocation.equals(Utility.getPreferredLocation(getActivity()))) {
             getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
         }
@@ -153,8 +157,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         if (savedInstanceState != null) {
             mLocation = savedInstanceState.getString(LocationEntry.COLUMN_LOCATION_SETTING);
         }
-        Intent intent = getActivity().getIntent();
-        if (intent != null && intent.hasExtra(DetailActivity.DATE_KEY)) {
+        if (getArguments() != null && getArguments().containsKey(DetailActivity.DATE_KEY)) {
             getLoaderManager().initLoader(DETAIL_LOADER, null, this);
         }
     }

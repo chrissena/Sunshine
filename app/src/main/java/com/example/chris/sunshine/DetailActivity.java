@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,21 +32,15 @@ final static String DATE_KEY = "date";
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Set content view, etc.
-
+        DetailFragment details = new DetailFragment();
+        details.setArguments(getIntent().getExtras());
         setContentView(R.layout.activity_detail);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.weather_detail_container, new DetailFragment())
+                    .add(R.id.weather_detail_container,details )
                     .commit();
             ViewServer.get(this).addWindow(this);
         }
-        Fragment fragB = new DetailFragment();
-        int containerId = R.id.weather_detail_container;
-        String tag = null;
-        android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.addToBackStack(tag);
-        ft.replace(containerId,fragB);
-ft.commit();
     }
 
     @Override

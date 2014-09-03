@@ -1,6 +1,5 @@
 package com.example.chris.sunshine;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -108,24 +107,33 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         ListView mForecastListView = (ListView) rootView.findViewById(R.id.listview_forecast);
         mForecastListView.setAdapter(mForecastAdapter);
-        mForecastListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mForecastListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 String date;
-
-                Intent detailIntent = new Intent(getActivity(),DetailActivity.class);
                 CursorAdapter adapter = (CursorAdapter) adapterView.getAdapter();
                 Cursor cursor = adapter.getCursor();
                 cursor.moveToPosition(position);
-                date = cursor.getString(COL_WEATHER_DATE);
-                detailIntent.putExtra(DetailActivity.DATE_KEY,date);
-                startActivity(detailIntent);
-
+                date = cursor.getString(ForecastFragment.COL_WEATHER_DATE);
+                ((Callback) getActivity()).onItemSelected(date);
             }
         });
         return rootView;
-    }
 
+
+    }
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callback {
+        /**
+         * Callback for when an item has been selected.
+         */
+        public void onItemSelected(String date);
+    }
 
     @Override
     public void onResume() {

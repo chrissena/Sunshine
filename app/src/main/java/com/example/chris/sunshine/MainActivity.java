@@ -1,9 +1,11 @@
 package com.example.chris.sunshine;
 
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,8 +13,29 @@ import android.widget.Toast;
 
 
 @SuppressWarnings("WeakerAccess")
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements ForecastFragment.Callback {
     boolean mTwoPane;
+
+    @Override
+    public void onItemSelected(String date) {
+
+        Bundle detailBundle = new Bundle();
+        detailBundle.putString(DetailActivity.DATE_KEY, date);
+
+        if(!mTwoPane) {
+            Intent detailIntent = new Intent(this, DetailActivity.class);
+            detailIntent.putExtras(detailBundle);
+            startActivity(detailIntent);
+        }else{
+            DetailFragment details = new DetailFragment();
+            details.setArguments(detailBundle);
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.weather_detail_container, details);
+            ft.commit();
+        }
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +97,5 @@ public class MainActivity extends ActionBarActivity {
         Toast.makeText(this, "Please install a maps app.", Toast.LENGTH_SHORT).show();
         return false;
     }
-
 
 }
