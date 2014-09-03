@@ -30,8 +30,11 @@ import java.util.Date;
 @SuppressWarnings("WeakerAccess")
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-
-    private String mLocation;
+    public static final int COL_WEATHER_ID = 6;
+    public static final int COL_WEATHER_DATE = 1;
+    public static final int COL_WEATHER_DESC = 2;
+    public static final int COL_WEATHER_MAX_TEMP = 3;
+    public static final int COL_WEATHER_MIN_TEMP = 4;
     private static final int FORECAST_LOADER = 0;
     //For the forecast view we're showing only a small subset of the stored data.
     //Specify the columns we need.
@@ -51,16 +54,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             LocationEntry.COLUMN_LOCATION_SETTING,
             WeatherEntry.COLUMN_WEATHER_ID
     };
-
-    public static final int COL_WEATHER_ID = 6;
-    public static final int COL_WEATHER_DATE = 1;
-    public static final int COL_WEATHER_DESC = 2;
-    public static final int COL_WEATHER_MAX_TEMP = 3;
-    public static final int COL_WEATHER_MIN_TEMP = 4;
-
     private static final String LOG_TAG = ForecastFragment.class.getSimpleName();
+    private static final String POSITION_KEY = "position";
+    private int mPosition;
+    private String mLocation;
     private ForecastAdapter mForecastAdapter;
-
+    private ListView mForecastListView;
     public ForecastFragment() {
     }
 
@@ -79,6 +78,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         int id = item.getItemId();
         if (id == R.id.action_refresh){
             updateWeather();
@@ -94,6 +94,14 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+        outState.putInt(POSITION_KEY, mPosition);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -105,12 +113,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 0
         );
 
-        ListView mForecastListView = (ListView) rootView.findViewById(R.id.listview_forecast);
+        mForecastListView = (ListView) rootView.findViewById(R.id.listview_forecast);
         mForecastListView.setAdapter(mForecastAdapter);
-        mForecastListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
+        mForecastListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                mPosition = position;
                 String date;
                 CursorAdapter adapter = (CursorAdapter) adapterView.getAdapter();
                 Cursor cursor = adapter.getCursor();
@@ -119,27 +127,19 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 ((Callback) getActivity()).onItemSelected(date);
             }
         });
+        if (savedInstanceState != null && savedInstanceState.containsKey(POSITION_KEY)) {
+            mPosition = savedInstanceState.getInt(POSITION_KEY);
+        }
         return rootView;
 
 
-    }
-    /**
-     * A callback interface that all activities containing this fragment must
-     * implement. This mechanism allows activities to be notified of item
-     * selections.
-     */
-    public interface Callback {
-        /**
-         * Callback for when an item has been selected.
-         */
-        public void onItemSelected(String date);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (mLocation != null && !Utility.getPreferredLocation(getActivity()).equals(mLocation)){
-            getLoaderManager().restartLoader(FORECAST_LOADER,null,this);
+        if (mLocation != null && !Utility.getPreferredLocation(getActivity()).equals(mLocation)) {
+            getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
         }
     }
 
@@ -175,7 +175,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
         mForecastAdapter.swapCursor(data);
+
+        if (mPosition != ListView.INVALID_POSITION) {
+            mForecastListView.setSelection(mPosition);
+        }
     }
+
     @Override
     public void onLoaderReset(Loader loader) {
         mForecastAdapter.swapCursor(null);
@@ -184,6 +189,18 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(FORECAST_LOADER,null,this);
+        getLoaderManager().initLoader(FORECAST_LOADER, null, this);
+    }
+
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callback {
+        /**
+         * Callback for when an item has been selected.
+         */
+        public void onItemSelected(String date);
     }
 }

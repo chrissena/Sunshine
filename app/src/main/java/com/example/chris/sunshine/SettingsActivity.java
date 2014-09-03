@@ -1,17 +1,21 @@
 package com.example.chris.sunshine;
 
+import android.annotation.TargetApi;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 
 import com.example.chris.sunshine.data.WeatherContract;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings.
- * <p>
+ * <p/>
  * See <a href="http://developer.android.com/design/patterns/settings.html">
  * Android Design: Settings</a> for design guidelines and the <a
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
@@ -61,14 +65,14 @@ public class SettingsActivity extends PreferenceActivity
     @Override
     public boolean onPreferenceChange(Preference preference, Object value) {
         String stringValue = String.valueOf(value);
-        if (!mBindingPreference){
-            if(preference.getKey().equals((getString(R.string.pref_location_key)))){
+        if (!mBindingPreference) {
+            if (preference.getKey().equals((getString(R.string.pref_location_key)))) {
                 FetchWeatherTask weatherTask = new FetchWeatherTask(this);
                 String location = value.toString();
                 weatherTask.execute(location);
-            }else{
+            } else {
                 //notify code that weather may be affected
-                getContentResolver().notifyChange(WeatherContract.WeatherEntry.CONTENT_URI,null);
+                getContentResolver().notifyChange(WeatherContract.WeatherEntry.CONTENT_URI, null);
             }
         }
         if (preference instanceof ListPreference) {
@@ -86,4 +90,10 @@ public class SettingsActivity extends PreferenceActivity
         return true;
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    @Nullable
+    @Override
+    public Intent getParentActivityIntent() {
+        return super.getParentActivityIntent().addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    }
 }

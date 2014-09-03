@@ -1,59 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
-    android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:layout_height="wrap_content"
+    android:background="@drawable/touch_selector"
     android:gravity="center_vertical"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:orientation="horizontal"
     android:padding="16dp">
+
     <ImageView
         android:id="@+id/list_item_icon"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="start"
         android:layout_weight="1"
+        android:gravity="start"
+        android:orientation="vertical"
         android:padding="5dp">
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/list_item_date_textview"
-            android:layout_weight="1"
-            android:padding="2dp"/>
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="2dp"
             android:layout_weight="1"
-            android:id="@+id/list_item_forecast_textview"/>
+            android:padding="2dp" />
+
+        <TextView
+            android:id="@+id/list_item_forecast_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="2dp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="5dp"
         android:layout_gravity="center_vertical"
-        android:gravity="end">
+        android:gravity="end"
+        android:orientation="vertical"
+        android:padding="5dp">
 
         <TextView
+            android:id="@+id/list_item_high_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"
-            android:padding="2dp"
-            android:id="@+id/list_item_high_textview"/>
+            android:padding="2dp" />
+
         <TextView
+            android:id="@+id/list_item_low_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"
-            android:padding="2dp"
-            android:id="@+id/list_item_low_textview"/>
+            android:padding="2dp" />
 
     </LinearLayout>
 
