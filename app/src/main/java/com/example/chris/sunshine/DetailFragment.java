@@ -29,22 +29,15 @@ import com.example.chris.sunshine.data.WeatherContract.WeatherEntry;
  */
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    public static final int COL_WEATHER_ID = 9;
+    public static final int COL_WEATHER_DESC = 2;
+    public static final int COL_WEATHER_MAX_TEMP = 3;
+    public static final int COL_WEATHER_MIN_TEMP = 4;
+    public static final int COL_WEATHER_HUMIDITY = 6;
+    public static final int COL_WEATHER_WIND_SPEED = 7;
+    public static final int COL_WEATHER_PRESSURE = 8;
     private static final int DETAIL_LOADER = 0;
-    private String mDate;
     private static final String SHARE_HASHTAG = " #SunshineApp";
-    private String mLocation;
-    private String mForecastSummary;
-    private TextView mDateView;
-    private TextView mDetailView;
-    private TextView mHighView;
-    private TextView mLowView;
-    private TextView mDayVew;
-    private TextView mHumidityVew;
-    private TextView mWindVew;
-    private TextView mPressureVew;
-    private ImageView mArtView;
-
-
     private static final String[] FORECAST_COLUMNS = {
            /*In this case the id needs to be fully qualified with a table name, since
            * the content provider joins the location & weather tables in the background
@@ -63,21 +56,20 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             WeatherEntry.COLUMN_PRESSURE,
             WeatherEntry.COLUMN_WEATHER_ID,
     };
-    //These indices are tied to FORECAST_COLUMNS. If FORECAST_COLUMNS changes, these must change.
-
-    public static final int COL_WEATHER_ID = 9;
-    public static final int COL_WEATHER_DESC = 2;
-    public static final int COL_WEATHER_MAX_TEMP = 3;
-    public static final int COL_WEATHER_MIN_TEMP = 4;
-    public static final int COL_WEATHER_HUMIDITY = 6;
-    public static final int COL_WEATHER_WIND_SPEED = 7;
-    public static final int COL_WEATHER_PRESSURE = 8;
-
-
-
-
-
     private static final String LOG_TAG = ForecastFragment.class.getSimpleName();
+    private String mDate;
+    private String mLocation;
+    private String mForecastSummary;
+    private TextView mDateView;
+    //These indices are tied to FORECAST_COLUMNS. If FORECAST_COLUMNS changes, these must change.
+    private TextView mDetailView;
+    private TextView mHighView;
+    private TextView mLowView;
+    private TextView mDayVew;
+    private TextView mHumidityVew;
+    private TextView mWindVew;
+    private TextView mPressureVew;
+    private ImageView mArtView;
     public DetailFragment() {
     }
 
@@ -116,8 +108,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         if (getArguments() != null && getArguments().containsKey(DetailActivity.DATE_KEY ))  {
             mDate = getArguments().getString(DetailActivity.DATE_KEY );
         }
-
-
     }
 
     @Override
