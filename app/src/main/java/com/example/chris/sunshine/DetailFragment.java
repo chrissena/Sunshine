@@ -42,7 +42,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private TextView mHumidityVew;
     private TextView mWindVew;
     private TextView mPressureVew;
-    private ImageView mIconView;
+    private ImageView mArtView;
 
 
     private static final String[] FORECAST_COLUMNS = {
@@ -52,7 +52,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
            * On the one hand, that's annoying. On the other, you can search the weather table
            * using the postalcode which is only in the Location table. So the convenience
            * is worth it.*/
-            WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID,
+            WeatherEntry.TABLE_NAME + "." + WeatherEntry._ID,
             WeatherEntry.COLUMN_DATETEXT,
             WeatherEntry.COLUMN_SHORT_DESC,
             WeatherEntry.COLUMN_MAX_TEMP,
@@ -60,17 +60,20 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             LocationEntry.COLUMN_LOCATION_SETTING,
             WeatherEntry.COLUMN_HUMIDITY,
             WeatherEntry.COLUMN_WIND_SPEED,
-            WeatherEntry.COLUMN_PRESSURE
+            WeatherEntry.COLUMN_PRESSURE,
+            WeatherEntry.COLUMN_WEATHER_ID,
     };
     //These indices are tied to FORECAST_COLUMNS. If FORECAST_COLUMNS changes, these must change.
 
-    public static final int COL_WEATHER_ID = 0;
+    public static final int COL_WEATHER_ID = 9;
     public static final int COL_WEATHER_DESC = 2;
     public static final int COL_WEATHER_MAX_TEMP = 3;
     public static final int COL_WEATHER_MIN_TEMP = 4;
     public static final int COL_WEATHER_HUMIDITY = 6;
     public static final int COL_WEATHER_WIND_SPEED = 7;
     public static final int COL_WEATHER_PRESSURE = 8;
+
+
 
 
 
@@ -109,7 +112,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         if (savedInstanceState != null) {
             mLocation = savedInstanceState.getString(mLocation);
         }
-        mDate = getActivity().getIntent().getExtras().getString(Intent.EXTRA_TEXT);
+        mDate = getActivity().getIntent().getExtras().getString(DetailActivity.DATE_KEY);
 
 
     }
@@ -127,7 +130,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         mHumidityVew = (TextView) rootView.findViewById(R.id.humidity_textview);
         mWindVew = (TextView) rootView.findViewById(R.id.wind_textview);
         mPressureVew = (TextView) rootView.findViewById(R.id.pressure_textview);
-        mIconView = (ImageView) rootView.findViewById(R.id.detail_icon);
+        mArtView = (ImageView) rootView.findViewById(R.id.detail_art);
         setHasOptionsMenu(true);
 
         return rootView;
@@ -136,7 +139,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onResume() {
         super.onResume();
-        if (!mLocation.equals(Utility.getPreferredLocation(getActivity()))) {
+        Intent intent = getActivity().getIntent();
+        if (intent != null && intent.hasExtra(DetailActivity.DATE_KEY) &&
+                !mLocation.equals(Utility.getPreferredLocation(getActivity()))) {
             getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
         }
     }
@@ -148,8 +153,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         if (savedInstanceState != null) {
             mLocation = savedInstanceState.getString(LocationEntry.COLUMN_LOCATION_SETTING);
         }
-        getLoaderManager().initLoader(DETAIL_LOADER, null, this);
-
+        Intent intent = getActivity().getIntent();
+        if (intent != null && intent.hasExtra(DetailActivity.DATE_KEY)) {
+            getLoaderManager().initLoader(DETAIL_LOADER, null, this);
+        }
     }
 
     @Override
@@ -176,6 +183,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             String humidity = cursor.getString(COL_WEATHER_HUMIDITY);
             String  wind = cursor.getString(COL_WEATHER_WIND_SPEED);
             String pressure = cursor.getString(COL_WEATHER_PRESSURE);
+
                         
             mDateView.setText(Utility.formatDate(mDate));
             mHighView.setText(Utility.formatTemperature(getActivity(), high));
@@ -185,7 +193,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             mWindVew.setText(String.format("WIND: %s km/H", wind));
             mPressureVew.setText(String.format("PRESSURE: %s kPa", pressure));
             mDetailView.setText(detail);
-            mIconView.setImageResource(R.drawable.ic_launcher);
+            mArtView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
+
 
             mForecastSummary = String.format("Forecast for %s on %s: %s - %s/%s",
                     mLocation,

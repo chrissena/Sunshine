@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,8 +15,7 @@ import com.example.chris.sunshine.debug.ViewServer;
 
 @SuppressWarnings("WeakerAccess")
 public class DetailActivity extends ActionBarActivity {
-
-
+final static String DATE_KEY = "date";
 
     public void onDestroy() {
         super.onDestroy();
@@ -37,10 +37,17 @@ public class DetailActivity extends ActionBarActivity {
         setContentView(R.layout.activity_detail);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new DetailFragment())
+                    .add(R.id.weather_detail_container, new DetailFragment())
                     .commit();
             ViewServer.get(this).addWindow(this);
         }
+        Fragment fragB = new DetailFragment();
+        int containerId = R.id.weather_detail_container;
+        String tag = null;
+        android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.addToBackStack(tag);
+        ft.replace(containerId,fragB);
+ft.commit();
     }
 
     @Override

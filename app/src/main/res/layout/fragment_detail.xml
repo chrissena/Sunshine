@@ -23,8 +23,7 @@
         android:paddingBottom="10dp"
         android:textSize="20sp"
         android:gravity="center_vertical"
-                android:id="@+id/day_textview"
-        android:text="TODAY"/>
+        android:id="@+id/day_textview"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -32,8 +31,7 @@
         android:paddingBottom="10dp"
         android:textSize="20sp"
         android:gravity="center_vertical"
-                android:id="@+id/date_textview"
-        android:text="12th September"/>
+        android:id="@+id/date_textview"/>
 
     <LinearLayout
         android:paddingTop="10dp"
@@ -53,14 +51,12 @@
                 android:textSize="30sp"
                 android:gravity="center_vertical"
                 android:id="@+id/high_textview"
-                android:text="26\u00B0"
                 android:padding="5dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:textSize="25sp"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="18\u00B0"
                 android:id="@+id/low_textview"
                 android:padding="5dp"/>
         </LinearLayout>
@@ -74,17 +70,15 @@
             android:gravity="center">
 
             <ImageView
-                android:id="@+id/detail_icon"
+                android:id="@+id/detail_art"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_launcher"/>
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:id="@+id/forecast_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="Clear"/>
+                android:padding="10dp"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -94,7 +88,6 @@
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:gravity="center_vertical"
-        android:text="HUMIDITY: 84%"
         android:id="@+id/humidity_textview" />
     <TextView
         android:layout_width="wrap_content"
@@ -102,7 +95,6 @@
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:gravity="center_vertical"
-        android:text="WIND: 6km/H NW"
         android:id="@+id/wind_textview" />
     <TextView
         android:layout_width="wrap_content"
@@ -110,7 +102,6 @@
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:gravity="center_vertical"
-        android:text="PRESSURE 1014 kPa"
         android:id="@+id/pressure_textview" />
 
 </LinearLayout>

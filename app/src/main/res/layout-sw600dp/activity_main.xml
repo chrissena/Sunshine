@@ -1,0 +1,23 @@
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:divider="?android:attr/dividerHorizontal">
+
+    <fragment
+        android:id="@+id/fragment_forecast"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:name="com.example.chris.sunshine.ForecastFragment" />
+
+    <FrameLayout android:id="@+id/weather_detail_container"
+        android:layout_width="0dp"
+        android:layout_weight="2"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity"
+        tools:ignore="MergeRootFrame" />
+
+</LinearLayout>
+

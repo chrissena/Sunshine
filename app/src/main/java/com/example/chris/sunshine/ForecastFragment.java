@@ -43,14 +43,17 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
            * On the one hand, that's annoying. On the other, you can search the weather table
            * using the postalcode which is only in the Location table. So the convenience
            * is worth it.*/
+
             WeatherEntry.TABLE_NAME + "." + WeatherEntry._ID,
             WeatherEntry.COLUMN_DATETEXT,
             WeatherEntry.COLUMN_SHORT_DESC,
             WeatherEntry.COLUMN_MAX_TEMP,
             WeatherEntry.COLUMN_MIN_TEMP,
-            LocationEntry.COLUMN_LOCATION_SETTING
+            LocationEntry.COLUMN_LOCATION_SETTING,
+            WeatherEntry.COLUMN_WEATHER_ID
     };
-    public static final int COL_WEATHER_ID = 0;
+
+    public static final int COL_WEATHER_ID = 6;
     public static final int COL_WEATHER_DATE = 1;
     public static final int COL_WEATHER_DESC = 2;
     public static final int COL_WEATHER_MAX_TEMP = 3;
@@ -115,7 +118,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 Cursor cursor = adapter.getCursor();
                 cursor.moveToPosition(position);
                 date = cursor.getString(COL_WEATHER_DATE);
-                detailIntent.putExtra(Intent.EXTRA_TEXT,date);
+                detailIntent.putExtra(DetailActivity.DATE_KEY,date);
                 startActivity(detailIntent);
 
             }
