@@ -70,6 +70,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private TextView mWindVew;
     private TextView mPressureVew;
     private ImageView mArtView;
+
     public DetailFragment() {
     }
 
@@ -82,7 +83,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.detail_fragment,menu);
+        inflater.inflate(R.menu.detail_fragment, menu);
         MenuItem item = menu.findItem(R.id.action_share);
 
         ShareActionProvider shareActionProvider
@@ -91,9 +92,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         shareIntent.setType("text/plain")
                 .putExtra(Intent.EXTRA_TEXT, mForecastSummary + SHARE_HASHTAG)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-        if(shareActionProvider != null){
+        if (shareActionProvider != null) {
             shareActionProvider.setShareIntent(shareIntent);
-        }else{
+        } else {
             Log.d(LOG_TAG, "Action Provider is null!");
         }
     }
@@ -105,8 +106,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             mLocation = savedInstanceState.getString(mLocation);
         }
 
-        if (getArguments() != null && getArguments().containsKey(DetailActivity.DATE_KEY ))  {
-            mDate = getArguments().getString(DetailActivity.DATE_KEY );
+        if (getArguments() != null && getArguments().containsKey(DetailActivity.DATE_KEY)) {
+            mDate = getArguments().getString(DetailActivity.DATE_KEY);
         }
     }
 
@@ -156,7 +157,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         mLocation = Utility.getPreferredLocation(getActivity());
         return new CursorLoader(getActivity(),
-                WeatherContract.WeatherEntry.buildWeatherLocationWithDate(mLocation,mDate),
+                WeatherContract.WeatherEntry.buildWeatherLocationWithDate(mLocation, mDate),
                 FORECAST_COLUMNS,
                 null,
                 null,
@@ -172,19 +173,19 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             Double high = cursor.getDouble(COL_WEATHER_MAX_TEMP);
             Double low = cursor.getDouble(COL_WEATHER_MIN_TEMP);
             String detail = cursor.getString(COL_WEATHER_DESC);
-            String day = Utility.getDayName(getActivity(),mDate);
+            String day = Utility.getDayName(getActivity(), mDate);
             String humidity = cursor.getString(COL_WEATHER_HUMIDITY);
-            String  wind = cursor.getString(COL_WEATHER_WIND_SPEED);
+            String wind = cursor.getString(COL_WEATHER_WIND_SPEED);
             String pressure = cursor.getString(COL_WEATHER_PRESSURE);
 
-                        
+
             mDateView.setText(Utility.formatDate(mDate));
             mHighView.setText(Utility.formatTemperature(getActivity(), high));
             mLowView.setText(Utility.formatTemperature(getActivity(), low));
             mDayVew.setText(day);
-            mHumidityVew.setText(String.format("HUMIDITY: %s%%", humidity));
-            mWindVew.setText(String.format("WIND: %s km/H", wind));
-            mPressureVew.setText(String.format("PRESSURE: %s kPa", pressure));
+            mHumidityVew.setText(String.format("Humidity: %s%%", humidity));
+            mWindVew.setText(String.format("Wind: %.0f km/H", Double.parseDouble(wind)));
+            mPressureVew.setText(String.format("Pressure: %.0f kPa", Double.parseDouble(pressure)));
             mDetailView.setText(detail);
             mArtView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
 

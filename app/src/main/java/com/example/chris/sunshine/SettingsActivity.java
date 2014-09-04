@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
 import com.example.chris.sunshine.data.WeatherContract;
+import com.example.chris.sunshine.service.SunshineService;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings.
@@ -67,9 +68,9 @@ public class SettingsActivity extends PreferenceActivity
         String stringValue = String.valueOf(value);
         if (!mBindingPreference) {
             if (preference.getKey().equals((getString(R.string.pref_location_key)))) {
-                FetchWeatherTask weatherTask = new FetchWeatherTask(this);
-                String location = value.toString();
-                weatherTask.execute(location);
+                Intent updateIntent = new Intent(this, SunshineService.class);
+                updateIntent.putExtra(SunshineService.LOCATION_QUERY_KEY, value.toString());
+                startService(updateIntent);
             } else {
                 //notify code that weather may be affected
                 getContentResolver().notifyChange(WeatherContract.WeatherEntry.CONTENT_URI, null);

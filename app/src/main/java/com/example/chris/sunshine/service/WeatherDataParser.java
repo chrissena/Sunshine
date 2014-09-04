@@ -1,4 +1,4 @@
-package com.example.chris.sunshine;
+package com.example.chris.sunshine.service;
 
 import android.content.ContentValues;
 import android.util.Log;
@@ -13,16 +13,13 @@ import java.util.Date;
 import java.util.Vector;
 class WeatherDataParser {
     private final static String LOG_TAG = WeatherDataParser.class.getSimpleName();
-
+    // private fields
+    private final String mForecastJsonStr;
     //Public properties
     double cityLatitude;
     double cityLongitude;
     Vector<ContentValues> weatherVector = new Vector<ContentValues>();
     String cityName;
-
-
-    // private fields
-    private final String mForecastJsonStr;
 
     
 

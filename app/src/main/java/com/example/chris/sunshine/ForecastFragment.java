@@ -1,5 +1,6 @@
 package com.example.chris.sunshine;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,11 +21,12 @@ import android.widget.ListView;
 
 import com.example.chris.sunshine.data.WeatherContract.LocationEntry;
 import com.example.chris.sunshine.data.WeatherContract.WeatherEntry;
+import com.example.chris.sunshine.service.SunshineService;
 
 import java.util.Date;
 
 /**
- Encapsulates fetching the forecast and displaying it as a {@link ListView} layout.
+ *Encapsulates fetching the forecast and displaying it as a {@link ListView} layout.
  * Created by Chris on 26/08/2014.
  */
 @SuppressWarnings("WeakerAccess")
@@ -59,7 +61,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private static final String POSITION_KEY = "position";
     private int mPosition;
     private String mLocation;
-    private boolean mUseTodayLayout = true;
+    private boolean mTwoPaneMode = false;
     private ForecastAdapter mForecastAdapter;
     private ListView mForecastListView;
     public ForecastFragment() {
@@ -68,7 +70,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public void setTwoPaneMode(boolean twoPaneMode) {
 
         if (mForecastAdapter != null) {
-            mUseTodayLayout = !twoPaneMode;
+            mTwoPaneMode = twoPaneMode;
             mForecastAdapter.setUseTodayLayout(!twoPaneMode);
         }
     }
@@ -98,9 +100,13 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     private void updateWeather() {
-        FetchWeatherTask fetchWeather = new FetchWeatherTask(getActivity());
 
-        fetchWeather.execute(Utility.getPreferredLocation(getActivity()));
+
+        Intent serivceIntent = new Intent(getActivity(), SunshineService.class);
+        serivceIntent.putExtra(SunshineService.LOCATION_QUERY_KEY,
+                Utility.getPreferredLocation(getActivity()));
+        getActivity().startService(serivceIntent);
+
     }
 
     @Override
@@ -122,7 +128,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 null,
                 0
         );
-        mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
+        mForecastAdapter.setUseTodayLayout(!mTwoPaneMode);
         mForecastListView = (ListView) rootView.findViewById(R.id.listview_forecast);
         mForecastListView.setAdapter(mForecastAdapter);
         mForecastListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -188,10 +194,25 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
         mForecastAdapter.swapCursor(data);
 
-        if (mPosition != ListView.INVALID_POSITION) {
+        if (mTwoPaneMode) {
+            if (mPosition != ListView.INVALID_POSITION) {
+                clickListItem(mPosition);
+            } else {
+                clickListItem(0);
+            }
+        } else if (mPosition != ListView.INVALID_POSITION) {
             mForecastListView.setSelection(mPosition);
         }
+    }
 
+    private void clickListItem(final int position) {
+        mForecastListView.post(new Runnable() {
+            @Override
+            public void run() {
+                mForecastListView.performItemClick(mForecastListView.getChildAt(position),
+                        position, mForecastListView.getItemIdAtPosition(position));
+            }
+        });
     }
 
     @Override
@@ -216,4 +237,5 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
          */
         public void onItemSelected(String date);
     }
+
 }

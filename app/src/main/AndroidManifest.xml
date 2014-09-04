@@ -39,6 +39,8 @@
                 android:value="com.example.chris.sunshine.MainActivity" />
         </activity>
 
+        <service android:name=".service.SunshineService" />
+
         <provider
             android:name=".data.WeatherProvider"
             android:authorities="com.example.chris.sunshine.data"
